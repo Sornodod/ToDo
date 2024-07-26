@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Board</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .header {
+            margin: 20px 0;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .new-task-form {
+            margin: 10px 0;
+        }
+        .new-task-form input {
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .new-task-form button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .new-task-form button:hover {
+            background-color: #0056b3;
+        }
+        .board {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .column {
+            flex: 1;
+            padding: 10px;
+            border-right: 1px solid #e0e0e0;
+            background-color: #fafafa;
+        }
+        .column:last-child {
+            border-right: none;
+        }
+        .column h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        .task {
+            background: white;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task .remove-btn {
+            color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">ДАРОВО ПИСЮНЫ</div>
+
+<div class="new-task-form">
+    <input type="text" id="new-task-input" placeholder="Введите новую задачу">
+    <button id="add-task-btn">Добавить задачу</button>
+</div>
+
+<div class="board">
+    <div class="column" id="todo">
+        <h2>В очереди</h2>
+        <div class="task">
+            <span>Задача 1</span>
+            <i class="fas fa-trash-alt remove-btn"></i>
+        </div>
+        <div class="task">
+            <span>Задача 2</span>
+            <i class="fas fa-trash-alt remove-btn"></i>
+        </div>
+    </div>
+    <div class="column" id="in-progress">
+        <h2>В работе</h2>
+        <div class="task">
+            <span>Задача 3</span>
+            <i class="fas fa-trash-alt remove-btn"></i>
+        </div>
+    </div>
+    <div class="column" id="done">
+        <h2>Выполнено</h2>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const columns = document.querySelectorAll('.column');
+
+        columns.forEach(column => {
+            new Sortable(column, {
+                group: 'shared',
+                animation: 150,
+                filter: 'h2',
+                preventOnFilter: false,
+                onEnd: function (evt) {
+                    console.log('Task moved');
+                }
+            });
+
+            column.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-btn')) {
+                    event.target.parentElement.remove();
+                }
+            });
+        });
+
+        const addTaskButton = document.getElementById('add-task-btn');
+        const newTaskInput = document.getElementById('new-task-input');
+
+        addTaskButton.addEventListener('click', () => {
+            const taskText = newTaskInput.value.trim();
+            if (taskText !== '') {
+                const newTask = document.createElement('div');
+                newTask.classList.add('task');
+                newTask.innerHTML = `<span>${taskText}</span><i class="fas fa-trash-alt remove-btn"></i>`;
+                document.getElementById('todo').appendChild(newTask);
+                newTaskInput.value = '';
+            }
+        });
+
+        newTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTaskButton.click();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
